@@ -855,14 +855,13 @@ h1, h2, h3 {
   color: var(--text-light);
   line-height: 1.45;
   margin-bottom: 10px;
-  max-width: 360px;
-  margin-left: auto;
-  margin-right: auto;
+  text-align: left;
+  padding: 0 20px;
 }
 
 .summary-sentence {
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .trait-pills {
