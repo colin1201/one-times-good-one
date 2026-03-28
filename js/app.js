@@ -477,20 +477,17 @@
     try {
       const r = state.results;
       const b5 = r.bigFive ? `O:${r.bigFive.O.percentage}% C:${r.bigFive.C.percentage}% E:${r.bigFive.E.percentage}% A:${r.bigFive.A.percentage}% N:${r.bigFive.N.percentage}%` : '';
-      const payload = {
+      const params = new URLSearchParams({
         timestamp: new Date().toISOString(),
         name: state.userName || '',
         mbtiType: r.mbti ? r.mbti.type : '',
         enneagramType: r.enneagram ? r.enneagram.type + 'w' + r.enneagram.wing : '',
         discType: r.disc ? (r.disc.combo || r.disc.primary) : '',
         bigFive: b5
-      };
-      fetch(SHEET_WEBHOOK_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(() => {});  // silent fail — don't disrupt user experience
+      });
+      // Use image beacon — most reliable cross-origin method
+      const img = new Image();
+      img.src = SHEET_WEBHOOK_URL + '?' + params.toString();
     } catch (e) {}
   }
 
@@ -946,14 +943,16 @@
   }
 
   // ===== SAVE AS IMAGE =====
-  // Force all animated elements visible for html2canvas capture
+  // Force all elements visible for html2canvas capture
   function forceCardsVisible() {
-    const cards = $$('#shareable-card .fade-in, #shareable-card .fade-in-delay-1, #shareable-card .fade-in-delay-2, #shareable-card .fade-in-delay-3, #shareable-card .fade-in-delay-4, #shareable-card .fade-in-delay-5');
-    cards.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; el.style.animation = 'none'; });
-    return cards;
+    const card = $('#shareable-card');
+    card.classList.remove('results-reveal');
+    const els = $$('#shareable-card *');
+    els.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; el.style.animation = 'none'; });
+    return els;
   }
-  function restoreCards(cards) {
-    cards.forEach(el => { el.style.opacity = ''; el.style.transform = ''; el.style.animation = ''; });
+  function restoreCards(els) {
+    els.forEach(el => { el.style.opacity = ''; el.style.transform = ''; el.style.animation = ''; });
   }
 
   $('#btn-save-image').addEventListener('click', async () => {

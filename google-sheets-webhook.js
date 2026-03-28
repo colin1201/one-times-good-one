@@ -7,47 +7,20 @@
  * Deploy as: Web app  |  Execute as: Me  |  Access: Anyone
  */
 
-// ===== HANDLE POST REQUESTS =====
-function doPost(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data = JSON.parse(e.postData.contents);
-
-    // Build the row
-    var row = [
-      data.timestamp || new Date().toISOString(),
-      data.name || '',
-      data.mbtiType || '',
-      data.enneagramType || '',
-      data.discType || '',
-      data.bigFive || ''
-    ];
-
-    sheet.appendRow(row);
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: 'success', message: 'Row added' }))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: 'error', message: error.message }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// ===== HANDLE GET REQUESTS (health check) =====
+// ===== HANDLE GET REQUESTS (saves data + health check) =====
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: 'ok', message: 'Webhook is running' }))
-    .setMimeType(ContentService.MimeType.JSON);
+  var p = e.parameter || {};
+  if (p.name) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    sheet.appendRow([p.timestamp || new Date().toISOString(), p.name, p.mbtiType, p.enneagramType, p.discType, p.bigFive]);
+  }
+  return ContentService.createTextOutput("ok");
 }
 
 // ===== SET UP SHEET HEADERS (run once manually) =====
 function setupHeaders() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var headers = ['Timestamp', 'Name', 'MBTI', 'Enneagram', 'DISC', 'Big Five'];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
-  sheet.setFrozenRows(1);
+  var s = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  s.getRange(1, 1, 1, 6).setValues([["Timestamp", "Name", "MBTI", "Enneagram", "DISC", "Big Five"]]);
+  s.getRange(1, 1, 1, 6).setFontWeight("bold");
+  s.setFrozenRows(1);
 }
