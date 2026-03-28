@@ -600,7 +600,7 @@ h1, h2, h3 {
 /* ===== MILESTONE TOASTS ===== */
 .milestone-toast {
   position: fixed;
-  bottom: 32px;
+  bottom: 200px;
   left: 50%;
   transform: translateX(-50%) translateY(80px);
   display: flex;
