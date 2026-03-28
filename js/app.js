@@ -478,6 +478,7 @@
       const r = state.results;
       const payload = {
         timestamp: new Date().toISOString(),
+        name: state.userName || '',
         mbtiType: r.mbti ? r.mbti.type : '',
         enneagramType: r.enneagram ? r.enneagram.type + 'w' + r.enneagram.wing : '',
         discType: r.disc ? (r.disc.combo || r.disc.primary) : '',
