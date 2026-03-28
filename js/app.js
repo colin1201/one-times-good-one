@@ -989,10 +989,11 @@
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         const file = new File([blob], filename, { type: 'image/png' });
         if (navigator.canShare({ files: [file] })) {
+          const siteURL = window.location.origin + window.location.pathname;
           await navigator.share({
             files: [file],
             title: 'My Personality Results',
-            text: `I'm "${state.summary.title}" — take the quiz!`
+            text: `I'm "${state.summary.title}". What about you?\n${siteURL}`
           });
           return;
         }
