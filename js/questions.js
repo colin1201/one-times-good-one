@@ -57,12 +57,12 @@ const QUESTIONS = [
   },
   {
     id: 6,
-    text: "A sincere compliment from someone I care about can make my whole week.",
+    text: "I go out of my way to make sure the people around me feel appreciated.",
     scoring: {
       "mbti_F": 1,
-      "ocean_N": 1,
+      "ocean_A": 1,
       "enneagram_2": 2,
-      "ocean_A": 1
+      "disc_I": 1
     }
   },
   {
