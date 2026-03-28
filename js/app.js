@@ -327,6 +327,8 @@
         $$('.answer-btn').forEach(b => b.classList.remove('selected'));
         state.currentIndex++;
         // Funnel analytics at milestones
+        if (state.currentIndex === 5) trackEvent('q5');
+        if (state.currentIndex === 10) trackEvent('q10');
         if (state.currentIndex === 15) trackEvent('q15');
         if (state.currentIndex === 30) trackEvent('q30');
         if (state.currentIndex === 45) trackEvent('q45');
