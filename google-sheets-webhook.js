@@ -13,14 +13,6 @@ function doPost(e) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data = JSON.parse(e.postData.contents);
 
-    // Extract Big Five percentages (default to empty string if missing)
-    var bigFive = data.bigFive || {};
-    var O = bigFive.O != null ? bigFive.O : '';
-    var C = bigFive.C != null ? bigFive.C : '';
-    var E = bigFive.E != null ? bigFive.E : '';
-    var A = bigFive.A != null ? bigFive.A : '';
-    var N = bigFive.N != null ? bigFive.N : '';
-
     // Build the row
     var row = [
       data.timestamp || new Date().toISOString(),
@@ -28,11 +20,7 @@ function doPost(e) {
       data.mbtiType || '',
       data.enneagramType || '',
       data.discType || '',
-      O,
-      C,
-      E,
-      A,
-      N
+      data.bigFive || ''
     ];
 
     sheet.appendRow(row);
@@ -58,18 +46,7 @@ function doGet(e) {
 // ===== SET UP SHEET HEADERS (run once manually) =====
 function setupHeaders() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var headers = [
-    'Timestamp',
-    'Name',
-    'MBTI Type',
-    'Enneagram Type',
-    'DISC Type',
-    'Big Five: O',
-    'Big Five: C',
-    'Big Five: E',
-    'Big Five: A',
-    'Big Five: N'
-  ];
+  var headers = ['Timestamp', 'Name', 'MBTI', 'Enneagram', 'DISC', 'Big Five'];
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
   sheet.setFrozenRows(1);

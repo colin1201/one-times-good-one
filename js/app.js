@@ -476,19 +476,14 @@
     if (!SHEET_WEBHOOK_URL || !state.results) return;
     try {
       const r = state.results;
+      const b5 = r.bigFive ? `O:${r.bigFive.O.percentage}% C:${r.bigFive.C.percentage}% E:${r.bigFive.E.percentage}% A:${r.bigFive.A.percentage}% N:${r.bigFive.N.percentage}%` : '';
       const payload = {
         timestamp: new Date().toISOString(),
         name: state.userName || '',
         mbtiType: r.mbti ? r.mbti.type : '',
         enneagramType: r.enneagram ? r.enneagram.type + 'w' + r.enneagram.wing : '',
         discType: r.disc ? (r.disc.combo || r.disc.primary) : '',
-        bigFive: r.bigFive ? {
-          O: r.bigFive.O.percentage,
-          C: r.bigFive.C.percentage,
-          E: r.bigFive.E.percentage,
-          A: r.bigFive.A.percentage,
-          N: r.bigFive.N.percentage
-        } : {}
+        bigFive: b5
       };
       fetch(SHEET_WEBHOOK_URL, {
         method: 'POST',
@@ -616,10 +611,9 @@
       cardsContainer.appendChild(card);
     });
 
-    renderStoryCard();
   }
 
-  // ===== RENDER STORY CARD (1080x1920 for Instagram) =====
+  // Story card removed — Instagram/WhatsApp now share the results card directly
   function renderStoryCard() {
     const { results, summary, userName } = state;
     if (!results) return;
