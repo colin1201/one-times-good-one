@@ -470,7 +470,7 @@
   // ===== GOOGLE SHEETS DATABASE =====
   // Replace this URL with your Google Apps Script web app URL after setup
   // See database-setup.md for instructions
-  const SHEET_WEBHOOK_URL = '';
+  const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwpmyPKLinf0FH8JRKmqbkd7LZR2LJg9Ho6VxGHCXpgoHZLss_i90PG1gueEwOSDK2OgA/exec';
 
   function sendResultsToSheet() {
     if (!SHEET_WEBHOOK_URL || !state.results) return;
