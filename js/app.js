@@ -51,6 +51,7 @@
         analytics: '1',
         sessionId: SESSION_ID,
         event: event,
+        name: state.userName || '',
         timestamp: new Date().toISOString()
       });
       const img = new Image();

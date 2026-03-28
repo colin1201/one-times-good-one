@@ -14,7 +14,7 @@ function doGet(e) {
 
   if (p.analytics === '1') {
     var analyticsSheet = ss.getSheetByName('Analytics') || ss.insertSheet('Analytics');
-    analyticsSheet.appendRow([p.timestamp, p.sessionId, p.event]);
+    analyticsSheet.appendRow([p.timestamp, p.sessionId, p.name || '', p.event]);
   } else if (p.name) {
     var resultsSheet = ss.getSheetByName('Results') || ss.getActiveSheet();
     resultsSheet.appendRow([p.timestamp, p.name, p.mbtiType, p.enneagramType, p.discType, p.bigFive]);
@@ -32,7 +32,7 @@ function setupHeaders() {
   results.setFrozenRows(1);
 
   var analytics = ss.getSheetByName('Analytics') || ss.insertSheet('Analytics');
-  analytics.getRange(1, 1, 1, 3).setValues([["Timestamp", "Session ID", "Event"]]);
-  analytics.getRange(1, 1, 1, 3).setFontWeight("bold");
+  analytics.getRange(1, 1, 1, 4).setValues([["Timestamp", "Session ID", "Name", "Event"]]);
+  analytics.getRange(1, 1, 1, 4).setFontWeight("bold");
   analytics.setFrozenRows(1);
 }
