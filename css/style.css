@@ -869,6 +869,7 @@ h1, h2, h3 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
+  margin-bottom: 16px;
 }
 
 .trait-pill {
