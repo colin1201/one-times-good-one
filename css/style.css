@@ -784,7 +784,8 @@ h1, h2, h3 {
   background: var(--white);
   max-width: 440px;
   margin: 0 auto;
-  border-radius: 0 0 var(--radius) var(--radius);
+  margin-top: 24px;
+  border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
 }

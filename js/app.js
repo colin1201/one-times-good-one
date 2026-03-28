@@ -1008,7 +1008,12 @@
     try {
       await loadHtml2Canvas();
       const cards = forceCardsVisible();
-      const canvas = await html2canvas($('#shareable-card'), { backgroundColor: '#f8f6f3', scale: 2, useCORS: true, logging: false });
+      const shareCard = $('#shareable-card');
+      // Force a fixed width so html2canvas renders consistently
+      const origWidth = shareCard.style.width;
+      shareCard.style.width = '440px';
+      const canvas = await html2canvas(shareCard, { backgroundColor: '#f8f6f3', scale: 2, useCORS: true, logging: false, width: 440 });
+      shareCard.style.width = origWidth;
       restoreCards(cards);
       const filename = `one-times-good-one-${state.userName.toLowerCase().replace(/\s+/g, '-')}.png`;
 
