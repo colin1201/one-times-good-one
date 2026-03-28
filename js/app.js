@@ -977,10 +977,28 @@
   });
 
   // ===== SHARE WHATSAPP =====
-  $('#btn-share-whatsapp').addEventListener('click', () => {
-    const shareURL = window.location.href;
+  $('#btn-share-whatsapp').addEventListener('click', async () => {
+    const siteURL = window.location.origin + window.location.pathname;
     const mbtiType = state.results && state.results.mbti ? state.results.mbti.type : '';
-    const text = `I'm ${mbtiType ? 'an ' + mbtiType + ' — ' : ''}"${state.summary.title}". What are you?\n\nTake the One Times Good One personality quiz (4 tests in 10 mins): ${shareURL}`;
+    const text = `I'm ${mbtiType ? 'an ' + mbtiType + ' — ' : ''}"${state.summary.title}". What are you?\n\nTake the quiz: ${siteURL}`;
+
+    try {
+      await loadHtml2Canvas();
+      const cards = forceCardsVisible();
+      const canvas = await html2canvas($('#shareable-card'), { backgroundColor: '#f8f6f3', scale: 2, useCORS: true, logging: false });
+      restoreCards(cards);
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      const file = new File([blob], 'my-personality.png', { type: 'image/png' });
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], text: text });
+        return;
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+    }
+
+    // Fallback: text-only share
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   });
 
