@@ -1002,13 +1002,14 @@
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   });
 
-  // ===== SHARE INSTAGRAM (captures story card at 1080x1920) =====
+  // ===== SHARE INSTAGRAM (captures results card same as on screen) =====
   $('#btn-share-instagram').addEventListener('click', async () => {
     try {
       await loadHtml2Canvas();
-      const storyCard = $('#story-card');
-      const canvas = await html2canvas(storyCard, { width: 1080, height: 1920, scale: 1, useCORS: true, logging: false });
-      const filename = `one-times-good-one-story-${state.userName.toLowerCase().replace(/\s+/g, '-')}.png`;
+      const cards = forceCardsVisible();
+      const canvas = await html2canvas($('#shareable-card'), { backgroundColor: '#f8f6f3', scale: 2, useCORS: true, logging: false });
+      restoreCards(cards);
+      const filename = `one-times-good-one-${state.userName.toLowerCase().replace(/\s+/g, '-')}.png`;
 
       // Try native share on mobile (lets user pick Instagram, TikTok, etc.)
       if (navigator.share && navigator.canShare) {
