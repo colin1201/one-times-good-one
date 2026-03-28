@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>One Times Good One — 4 Personality Tests in 1 Quiz</title>
+  <meta name="description" content="You're not one-dimensional. Get your MBTI, Enneagram, DISC, and Big Five results in one 10-minute quiz.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:title" content="One Times Good One — 4 Personality Tests in 1 Quiz">
+  <meta property="og:description" content="You're not one-dimensional. Your personality test shouldn't be either. MBTI, Enneagram, DISC, Big Five — one quiz, every angle.">
+  <meta property="og:image" content="og-image.svg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===== SCREEN 1: LANDING ===== -->
+  <section id="landing" class="screen active">
+    <div class="landing-container">
+      <div class="landing-hero">
+        <h1 class="app-name">One Times<br>Good One</h1>
+        <p class="tagline">You're not one-dimensional.<br>Your personality test shouldn't be either.</p>
+        <p class="tagline-sub">MBTI. Enneagram. DISC. Big Five. One quiz, every angle.</p>
+      </div>
+
+      <div class="landing-form">
+        <div class="name-fields">
+          <input type="text" id="first-name-input" class="name-input" placeholder="First name" autocomplete="given-name">
+          <input type="text" id="last-name-input" class="name-input" placeholder="Last name" autocomplete="family-name">
+        </div>
+        <button id="start-btn" class="btn btn-primary btn-large">Start</button>
+      </div>
+
+      <div class="how-it-works">
+        <h2 class="section-label">How it works</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="step-icon">&#9999;&#65039;</span>
+            <span class="step-text">Answer 60 questions</span>
+          </div>
+          <div class="step">
+            <span class="step-icon">&#128202;</span>
+            <span class="step-text">Get scored across 4 frameworks</span>
+          </div>
+          <div class="step">
+            <span class="step-icon">&#10024;</span>
+            <span class="step-text">Discover all sides of you</span>
+          </div>
+        </div>
+        <p class="time-note">Takes about 10 minutes</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCREEN 2: QUIZ ===== -->
+  <section id="quiz" class="screen">
+    <div class="quiz-container">
+      <div class="quiz-header">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+        <div class="quiz-nav-row">
+          <button class="btn-back-quiz" id="btn-back-question">&larr; Back</button>
+          <div class="question-counter" id="question-counter">1 / 60</div>
+        </div>
+      </div>
+
+      <div class="question-area" id="question-area">
+        <p class="question-text" id="question-text">Loading question...</p>
+      </div>
+
+      <div class="halfway-nudge" id="halfway-nudge">
+        Halfway there! Your personality is taking shape...
+      </div>
+
+      <div class="answer-options" id="answer-options">
+        <button class="answer-btn" data-value="1">
+          <span class="answer-circle"></span>
+          <span class="answer-label">Strongly Disagree</span>
+        </button>
+        <button class="answer-btn" data-value="2">
+          <span class="answer-circle"></span>
+          <span class="answer-label">Disagree</span>
+        </button>
+        <button class="answer-btn" data-value="3">
+          <span class="answer-circle"></span>
+          <span class="answer-label">Neutral</span>
+        </button>
+        <button class="answer-btn" data-value="4">
+          <span class="answer-circle"></span>
+          <span class="answer-label">Agree</span>
+        </button>
+        <button class="answer-btn" data-value="5">
+          <span class="answer-circle"></span>
+          <span class="answer-label">Strongly Agree</span>
+        </button>
+      </div>
+
+      <div class="keyboard-hint" id="keyboard-hint">Press 1–5 on your keyboard to answer</div>
+    </div>
+  </section>
+
+  <!-- ===== SCREEN 3: RESULTS ===== -->
+  <section id="results" class="screen">
+    <div id="shareable-card" class="shareable-card">
+      <div class="results-header" id="results-header">
+        <p class="results-brand">One Times Good One</p>
+        <h1 class="results-name" id="results-name">Your Name</h1>
+        <p class="results-tagline">Here's what makes you, you.</p>
+      </div>
+
+      <div class="results-summary" id="results-summary">
+        <span class="summary-label" id="summary-label" style="display:none;"></span>
+        <h2 class="summary-title" id="summary-title">The Architect</h2>
+        <p class="summary-description" id="summary-description">Loading your personality summary...</p>
+        <div class="trait-pills" id="trait-pills">
+          <!-- Trait pills inserted by JS -->
+        </div>
+      </div>
+
+      <div class="result-cards" id="result-cards">
+        <!-- 5 result cards inserted by JS -->
+      </div>
+
+      <div class="results-footer">
+        <p class="results-url">onetimesgoodone.com</p>
+      </div>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn btn-action" id="btn-save-image">
+        <span class="btn-icon">&#128247;</span> Save as Image
+      </button>
+      <button class="btn btn-action" id="btn-share-whatsapp">
+        <span class="btn-icon">&#128172;</span> Share on WhatsApp
+      </button>
+      <button class="btn btn-action" id="btn-share-instagram">
+        <span class="btn-icon">&#128248;</span> Share on Instagram
+      </button>
+      <button class="btn btn-action" id="btn-copy-link">
+        <span class="btn-icon">&#128279;</span> Copy Link
+      </button>
+      <button class="btn btn-primary" id="btn-explore">Explore Results</button>
+      <button class="btn btn-secondary" id="btn-retake">Retake Quiz</button>
+    </div>
+
+    <!-- Story card: offscreen, rendered by html2canvas for Instagram share -->
+    <div id="story-card" style="position:absolute; left:-9999px; width:1080px; height:1920px;">
+      <div class="story-card-inner">
+        <p class="story-brand">ONE TIMES GOOD ONE</p>
+        <h1 class="story-name" id="story-name">Your Name</h1>
+        <div class="story-divider"></div>
+        <p class="story-title" id="story-title"></p>
+        <div class="story-results" id="story-results">
+          <!-- Populated by JS -->
+        </div>
+        <div class="story-bigfive" id="story-bigfive">
+          <!-- Big Five bars populated by JS -->
+        </div>
+        <p class="story-url">onetimesgoodone.com</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCREEN 4: DEEP DIVE ===== -->
+  <section id="deepdive" class="screen">
+    <div class="deepdive-container">
+      <button class="btn-back" id="btn-back-results">&larr; Back to results</button>
+
+      <div class="deepdive-header" id="deepdive-header">
+        <span class="deepdive-framework" id="deepdive-framework">MBTI</span>
+        <h1 class="deepdive-type" id="deepdive-type">INTJ</h1>
+        <h2 class="deepdive-title" id="deepdive-title">The Architect</h2>
+      </div>
+
+      <div class="deepdive-body">
+        <div class="deepdive-bars dimension-bars" id="deepdive-bars">
+          <!-- Dimension bars inserted by JS -->
+        </div>
+
+        <div class="deepdive-description" id="deepdive-description">Loading...</div>
+
+        <div class="deepdive-section">
+          <h3>Strengths</h3>
+          <ul id="deepdive-strengths" class="deepdive-list">
+            <!-- Inserted by JS -->
+          </ul>
+        </div>
+
+        <div class="deepdive-section">
+          <h3>Growth Areas</h3>
+          <ul id="deepdive-growth" class="deepdive-list">
+            <!-- Inserted by JS -->
+          </ul>
+        </div>
+
+        <div class="deepdive-section">
+          <h3>Famous People Like You</h3>
+          <ul id="deepdive-famous" class="deepdive-list deepdive-famous">
+            <!-- Inserted by JS -->
+          </ul>
+        </div>
+
+        <!-- Expandable sections inserted by JS -->
+        <div id="deepdive-expandable"></div>
+
+        <!-- Next framework teaser inserted by JS -->
+        <div id="deepdive-next-teaser"></div>
+
+        <div class="deepdive-nav">
+          <button class="btn btn-secondary" id="btn-prev-framework">&larr; Previous</button>
+          <button class="btn btn-secondary" id="btn-next-framework">Next &rarr;</button>
+        </div>
+
+        <button class="btn btn-primary" id="btn-see-all-results">See all your results</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCREEN 5: EXPLORE ===== -->
+  <section id="explore" class="screen">
+    <div class="explore-container">
+      <button class="btn-back" id="btn-back-results-explore">&larr; Back to results</button>
+      <h1 class="explore-title">Your Full Profile</h1>
+      <p class="explore-subtitle">All four frameworks, all of you.</p>
+
+      <div class="explore-sections" id="explore-sections">
+        <!-- 5 expandable sections inserted by JS -->
+      </div>
+
+      <button class="btn btn-secondary" id="btn-back-to-results-bottom">Back to results</button>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <!-- html2canvas loaded lazily when user clicks save/share -->
+  <script src="js/questions.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
