@@ -1,26 +1,38 @@
 /**
  * Google Apps Script — Personality Quiz Webhook
  *
- * Receives POST requests from the personality quiz app
- * and appends each submission as a new row in the active Google Sheet.
+ * Handles two types of GET requests:
+ * 1. Quiz results (name param) → saved to "Results" sheet
+ * 2. Analytics events (analytics param) → saved to "Analytics" sheet
  *
  * Deploy as: Web app  |  Execute as: Me  |  Access: Anyone
  */
 
-// ===== HANDLE GET REQUESTS (saves data + health check) =====
 function doGet(e) {
   var p = e.parameter || {};
-  if (p.name) {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    sheet.appendRow([p.timestamp || new Date().toISOString(), p.name, p.mbtiType, p.enneagramType, p.discType, p.bigFive]);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  if (p.analytics === '1') {
+    var analyticsSheet = ss.getSheetByName('Analytics') || ss.insertSheet('Analytics');
+    analyticsSheet.appendRow([p.timestamp, p.sessionId, p.event]);
+  } else if (p.name) {
+    var resultsSheet = ss.getSheetByName('Results') || ss.getActiveSheet();
+    resultsSheet.appendRow([p.timestamp, p.name, p.mbtiType, p.enneagramType, p.discType, p.bigFive]);
   }
+
   return ContentService.createTextOutput("ok");
 }
 
-// ===== SET UP SHEET HEADERS (run once manually) =====
 function setupHeaders() {
-  var s = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  s.getRange(1, 1, 1, 6).setValues([["Timestamp", "Name", "MBTI", "Enneagram", "DISC", "Big Five"]]);
-  s.getRange(1, 1, 1, 6).setFontWeight("bold");
-  s.setFrozenRows(1);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  var results = ss.getSheetByName('Results') || ss.getActiveSheet();
+  results.getRange(1, 1, 1, 6).setValues([["Timestamp", "Name", "MBTI", "Enneagram", "DISC", "Big Five"]]);
+  results.getRange(1, 1, 1, 6).setFontWeight("bold");
+  results.setFrozenRows(1);
+
+  var analytics = ss.getSheetByName('Analytics') || ss.insertSheet('Analytics');
+  analytics.getRange(1, 1, 1, 3).setValues([["Timestamp", "Session ID", "Event"]]);
+  analytics.getRange(1, 1, 1, 3).setFontWeight("bold");
+  analytics.setFrozenRows(1);
 }

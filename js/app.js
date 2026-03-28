@@ -38,6 +38,25 @@
   };
 
   const STORAGE_KEY = 'otgo_progress';
+  const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwpmyPKLinf0FH8JRKmqbkd7LZR2LJg9Ho6VxGHCXpgoHZLss_i90PG1gueEwOSDK2OgA/exec';
+
+  // ===== FUNNEL ANALYTICS =====
+  const SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const trackedEvents = {};
+  function trackEvent(event) {
+    if (!SHEET_WEBHOOK_URL || trackedEvents[event]) return;
+    trackedEvents[event] = true;
+    try {
+      const params = new URLSearchParams({
+        analytics: '1',
+        sessionId: SESSION_ID,
+        event: event,
+        timestamp: new Date().toISOString()
+      });
+      const img = new Image();
+      img.src = SHEET_WEBHOOK_URL + '?' + params.toString();
+    } catch (e) {}
+  }
 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
@@ -49,6 +68,8 @@
     deepdive: $('#deepdive'),
     explore: $('#explore')
   };
+
+  trackEvent('landed');
 
   function showScreen(name) {
     Object.values(screens).forEach(s => s.classList.remove('active'));
@@ -109,6 +130,7 @@
 
   // ===== QUIZ =====
   function startQuiz() {
+    trackEvent('started');
     state.questions = shuffleArray([...(typeof QUESTIONS !== 'undefined' ? QUESTIONS : [])]);
     state.currentIndex = 0;
     state.highWaterMark = 0;
@@ -304,6 +326,10 @@
         advanceTimeout = null;
         $$('.answer-btn').forEach(b => b.classList.remove('selected'));
         state.currentIndex++;
+        // Funnel analytics at milestones
+        if (state.currentIndex === 15) trackEvent('q15');
+        if (state.currentIndex === 30) trackEvent('q30');
+        if (state.currentIndex === 45) trackEvent('q45');
         if (state.currentIndex >= state.questions.length) {
           clearProgress(); // #2: clear saved progress on completion
           state.inputLocked = false;
@@ -410,6 +436,7 @@
 
   // ===== FINISH QUIZ =====
   function finishQuiz() {
+    trackEvent('completed');
     if (typeof calculateResults === 'function') {
       state.results = calculateResults(state.answers);
     }
@@ -470,8 +497,6 @@
   // ===== GOOGLE SHEETS DATABASE =====
   // Replace this URL with your Google Apps Script web app URL after setup
   // See database-setup.md for instructions
-  const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwpmyPKLinf0FH8JRKmqbkd7LZR2LJg9Ho6VxGHCXpgoHZLss_i90PG1gueEwOSDK2OgA/exec';
-
   function sendResultsToSheet() {
     if (!SHEET_WEBHOOK_URL || !state.results) return;
     try {
@@ -972,6 +997,7 @@
 
   // ===== SHARE RESULTS WITH FRIENDS =====
   $('#btn-share-instagram').addEventListener('click', async () => {
+    trackEvent('shared');
     try {
       await loadHtml2Canvas();
       const cards = forceCardsVisible();
