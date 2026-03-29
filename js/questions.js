@@ -1,6 +1,6 @@
 // ============================================================
 // ONE TIMES GOOD ONE — Personality Quiz Questions & Scoring
-// 60 questions across 4 frameworks: MBTI, Enneagram, DISC,
+// 70 questions across 4 frameworks: MBTI, Enneagram, DISC,
 // and Big Five (OCEAN)
 // ============================================================
 
@@ -20,7 +20,7 @@ const QUESTIONS = [
     id: 2,
     text: "I'd rather have one deep conversation than work a room full of people.",
     scoring: {
-      "mbti_E": -2,
+      "mbti_E": -1,
       "ocean_E": -1,
       "enneagram_4": 1
     }
@@ -177,7 +177,7 @@ const QUESTIONS = [
     id: 18,
     text: "I need time alone to recharge after being around people.",
     scoring: {
-      "mbti_E": -2,
+      "mbti_E": -1,
       "ocean_E": -1,
       "enneagram_5": 1,
       "disc_I": -1
@@ -326,7 +326,6 @@ const QUESTIONS = [
     text: "I often get lost in my own thoughts and daydreams.",
     scoring: {
       "mbti_N": 1,
-      "mbti_E": -1,
       "ocean_O": 1,
       "enneagram_4": 1
     }
@@ -396,7 +395,7 @@ const QUESTIONS = [
     id: 39,
     text: "I need plenty of alone time to feel like myself.",
     scoring: {
-      "mbti_E": -2,
+      "mbti_E": -1,
       "ocean_E": -2,
       "enneagram_5": 2,
       "disc_I": -1
@@ -613,6 +612,112 @@ const QUESTIONS = [
       "mbti_E": -1,
       "ocean_E": -1,
       "enneagram_5": 1
+    }
+  },
+
+  // --- Q61-70: E/I rebalance, Enneagram 6 & 9 reinforcement ---
+  {
+    id: 61,
+    text: "I'll happily strike up a conversation with a complete stranger — in a queue, on a train, wherever.",
+    scoring: {
+      "mbti_E": 2,
+      "ocean_E": 2,
+      "disc_I": 1,
+      "enneagram_7": 1
+    }
+  },
+  {
+    id: 62,
+    text: "My ideal weekend involves other people — I'd choose a busy social plan over a quiet one almost every time.",
+    scoring: {
+      "mbti_E": 2,
+      "ocean_E": 2,
+      "enneagram_7": 1,
+      "disc_I": 1
+    }
+  },
+  {
+    id: 63,
+    text: "I think best when I'm talking — I often don't know what I think until I've said it out loud.",
+    scoring: {
+      "mbti_E": 2,
+      "ocean_E": 1,
+      "disc_I": 1,
+      "enneagram_7": 1
+    }
+  },
+  {
+    id: 64,
+    text: "If I find out my friends did something fun without me, it genuinely bothers me.",
+    scoring: {
+      "mbti_E": 1,
+      "ocean_E": 1,
+      "ocean_N": 1,
+      "enneagram_2": 1,
+      "enneagram_6": 1
+    }
+  },
+  {
+    id: 65,
+    text: "After a long week, catching up with friends gives me more energy than staying in.",
+    scoring: {
+      "mbti_E": 2,
+      "ocean_E": 2,
+      "disc_I": 1
+    }
+  },
+  {
+    id: 66,
+    text: "In a group, I'm usually one of the most talkative people — and I'm comfortable with that.",
+    scoring: {
+      "mbti_E": 2,
+      "ocean_E": 2,
+      "disc_I": 2,
+      "enneagram_3": 1
+    }
+  },
+  {
+    id: 67,
+    text: "I feel at ease walking into a party where I don't know anyone.",
+    scoring: {
+      "mbti_E": 2,
+      "ocean_E": 2,
+      "disc_I": 1,
+      "enneagram_6": -1,
+      "ocean_N": -1
+    }
+  },
+  {
+    id: 68,
+    text: "I always think about what could go wrong so I can be ready for it — I'd rather be prepared than surprised.",
+    scoring: {
+      "enneagram_6": 2,
+      "ocean_N": 1,
+      "mbti_J": 1,
+      "disc_C": 1,
+      "ocean_C": 1
+    }
+  },
+  {
+    id: 69,
+    text: "I often go along with what the group wants, even when I have a different preference, because it's not worth the hassle.",
+    scoring: {
+      "enneagram_9": 2,
+      "ocean_A": 1,
+      "disc_S": 1,
+      "disc_D": -1,
+      "mbti_F": 1
+    }
+  },
+  {
+    id: 70,
+    text: "People sometimes tell me I'm too laid back — that I should care more or push harder.",
+    scoring: {
+      "enneagram_9": 2,
+      "disc_D": -1,
+      "disc_S": 1,
+      "ocean_C": -1,
+      "enneagram_3": -1
     }
   }
 ];

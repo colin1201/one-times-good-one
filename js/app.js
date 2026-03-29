@@ -174,10 +174,10 @@
 
     // Framework milestone toasts
     const milestones = {
-      12: { text: 'Your personality type is taking shape...', colour: 'var(--blue)' },
-      24: { text: 'Your core motivation is getting clearer...', colour: 'var(--pink)' },
-      36: { text: 'Your working style is emerging...', colour: 'var(--green)' },
-      48: { text: 'Almost there — your full picture is forming...', colour: 'var(--purple)' }
+      14: { text: 'Your personality type is taking shape...', colour: 'var(--blue)' },
+      28: { text: 'Your core motivation is getting clearer...', colour: 'var(--pink)' },
+      42: { text: 'Your working style is emerging...', colour: 'var(--green)' },
+      56: { text: 'Almost there — your full picture is forming...', colour: 'var(--purple)' }
     };
     if (milestones[num] && !state.milestonesShown[num]) {
       state.milestonesShown[num] = true;
@@ -327,12 +327,12 @@
         advanceTimeout = null;
         $$('.answer-btn').forEach(b => b.classList.remove('selected'));
         state.currentIndex++;
-        // Funnel analytics at milestones
-        if (state.currentIndex === 5) trackEvent('q5');
-        if (state.currentIndex === 10) trackEvent('q10');
-        if (state.currentIndex === 15) trackEvent('q15');
-        if (state.currentIndex === 30) trackEvent('q30');
-        if (state.currentIndex === 45) trackEvent('q45');
+        // Funnel analytics at milestones (every ~20%)
+        if (state.currentIndex === 7) trackEvent('q7');
+        if (state.currentIndex === 14) trackEvent('q14');
+        if (state.currentIndex === 28) trackEvent('q28');
+        if (state.currentIndex === 42) trackEvent('q42');
+        if (state.currentIndex === 56) trackEvent('q56');
         if (state.currentIndex >= state.questions.length) {
           clearProgress(); // #2: clear saved progress on completion
           state.inputLocked = false;
@@ -1076,7 +1076,7 @@
   // ===== #5: SHORTER SHAREABLE URL — encode only answers =====
   function encodeResultsToURL() {
     try {
-      // Encode just the name and 60 answer scores (not full results)
+      // Encode just the name and answer scores (not full results)
       const answerMap = {};
       state.answers.forEach(a => { answerMap[a.questionId] = a.score; });
       const payload = {
@@ -1151,7 +1151,7 @@
     const resumeDiv = document.createElement('div');
     resumeDiv.className = 'resume-banner';
     resumeDiv.innerHTML = `
-      <p>Welcome back, ${saved.firstName}! You were on question ${saved.currentIndex + 1} of 60.</p>
+      <p>Welcome back, ${saved.firstName}! You were on question ${saved.currentIndex + 1} of ${typeof QUESTIONS !== 'undefined' ? QUESTIONS.length : 70}.</p>
       <div class="resume-actions">
         <button class="btn btn-primary btn-resume" id="btn-resume">Continue</button>
         <button class="btn btn-secondary btn-start-fresh" id="btn-start-fresh">Start fresh</button>
