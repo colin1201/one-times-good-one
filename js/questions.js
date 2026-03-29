@@ -1,6 +1,6 @@
 // ============================================================
 // ONE TIMES GOOD ONE — Personality Quiz Questions & Scoring
-// 70 questions across 4 frameworks: MBTI, Enneagram, DISC,
+// 75 questions across 4 frameworks: MBTI, Enneagram, DISC,
 // and Big Five (OCEAN)
 // ============================================================
 
@@ -718,6 +718,62 @@ const QUESTIONS = [
       "disc_S": 1,
       "ocean_C": -1,
       "enneagram_3": -1
+    }
+  },
+
+  // --- Q71-75: Strengthen N/S, Enneagram 4/1, DISC C, Big Five C/N ---
+  {
+    id: 71,
+    text: "I'd rather work with what's real and proven than chase a vision that might not pan out.",
+    scoring: {
+      "mbti_N": -2,
+      "ocean_O": -1,
+      "disc_C": 1,
+      "enneagram_1": 1,
+      "ocean_C": 1
+    }
+  },
+  {
+    id: 72,
+    text: "I often feel like I experience the world differently from the people around me — like I see things they don't.",
+    scoring: {
+      "enneagram_4": 2,
+      "mbti_N": 1,
+      "ocean_O": 1,
+      "ocean_N": 1,
+      "enneagram_5": 1
+    }
+  },
+  {
+    id: 73,
+    text: "Small mistakes bother me — even when nobody else notices, I know it's not right.",
+    scoring: {
+      "enneagram_1": 2,
+      "disc_C": 2,
+      "ocean_C": 1,
+      "ocean_N": 1,
+      "mbti_J": 1
+    }
+  },
+  {
+    id: 74,
+    text: "I rarely get flustered — most things people stress about just don't get to me.",
+    scoring: {
+      "ocean_N": -2,
+      "enneagram_9": 1,
+      "disc_S": 1,
+      "enneagram_4": -1
+    }
+  },
+  {
+    id: 75,
+    text: "I prefer hands-on, step-by-step instructions over a high-level overview.",
+    scoring: {
+      "mbti_N": -2,
+      "disc_C": 1,
+      "ocean_O": -1,
+      "enneagram_6": 1,
+      "disc_S": 1
     }
   }
 ];
