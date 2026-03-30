@@ -1594,6 +1594,68 @@ h1, h2, h3 {
   margin-top: auto;
 }
 
+/* ===== PERSONALITY GUIDE ===== */
+.guide-container {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+}
+
+.guide-header {
+  text-align: center;
+  padding: 32px 24px 28px;
+  margin: 0 -24px 32px;
+  color: var(--white);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--analyst-from), var(--analyst-to));
+}
+
+.guide-header.header-diplomat {
+  background: linear-gradient(135deg, var(--diplomat-from), var(--diplomat-to));
+}
+.guide-header.header-sentinel {
+  background: linear-gradient(135deg, var(--sentinel-from), var(--sentinel-to));
+}
+.guide-header.header-explorer {
+  background: linear-gradient(135deg, var(--explorer-from), var(--explorer-to));
+}
+
+.guide-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.guide-title {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.guide-combo {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.guide-section {
+  margin-bottom: 28px;
+}
+
+.guide-section-title {
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.guide-section-text {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+
 /* ===== DEEP DIVE EXPANDABLE SECTIONS ===== */
 .deepdive-dropdown {
   border-top: 1px solid var(--border);

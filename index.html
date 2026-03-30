@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=10">
+  <link rel="stylesheet" href="css/style.css?v=11">
 </head>
 <body>
 
@@ -149,10 +149,27 @@
       <button class="btn btn-action" id="btn-copy-link">
         <span class="btn-icon">&#128279;</span> Copy Link
       </button>
-      <button class="btn btn-primary" id="btn-explore">Explore Results</button>
+      <button class="btn btn-primary" id="btn-guide">Read Your Full Personality Guide</button>
+      <button class="btn btn-secondary" id="btn-explore">Explore Individual Results</button>
       <button class="btn btn-secondary" id="btn-retake">Retake Quiz</button>
     </div>
 
+  </section>
+
+  <!-- ===== SCREEN: PERSONALITY GUIDE ===== -->
+  <section id="guide" class="screen">
+    <div class="guide-container">
+      <button class="btn-back" id="btn-back-guide">&larr; Back to results</button>
+      <div class="guide-header" id="guide-header">
+        <p class="guide-label">Your Personality Guide</p>
+        <h1 class="guide-title" id="guide-title">People Like You</h1>
+        <p class="guide-combo" id="guide-combo">ENFJ &middot; Type 2w3 &middot; DI &middot; High Agreeableness</p>
+      </div>
+      <div class="guide-body" id="guide-body">
+        <!-- Sections inserted by JS -->
+      </div>
+      <button class="btn btn-secondary" id="btn-guide-to-results">Back to results</button>
+    </div>
   </section>
 
   <!-- ===== SCREEN 4: DEEP DIVE ===== -->
@@ -227,7 +244,7 @@
 
   <!-- Scripts -->
   <!-- html2canvas loaded lazily when user clicks save/share -->
-  <script src="js/questions.js?v=10"></script>
-  <script src="js/app.js?v=10"></script>
+  <script src="js/questions.js?v=11"></script>
+  <script src="js/app.js?v=11"></script>
 </body>
 </html>

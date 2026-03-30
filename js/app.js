@@ -66,6 +66,7 @@
     landing: $('#landing'),
     quiz: $('#quiz'),
     results: $('#results'),
+    guide: $('#guide'),
     deepdive: $('#deepdive'),
     explore: $('#explore')
   };
@@ -957,6 +958,233 @@
   $('#btn-explore').addEventListener('click', () => { renderExplore(); showScreen('explore'); });
   $('#btn-back-results-explore').addEventListener('click', () => showScreen('results'));
   $('#btn-back-to-results-bottom').addEventListener('click', () => showScreen('results'));
+
+  // ===== PERSONALITY GUIDE =====
+  $('#btn-guide').addEventListener('click', () => { renderGuide(); showScreen('guide'); });
+  $('#btn-back-guide').addEventListener('click', () => showScreen('results'));
+  $('#btn-guide-to-results').addEventListener('click', () => showScreen('results'));
+
+  function renderGuide() {
+    const r = state.results;
+    const s = state.summary;
+    if (!r) return;
+
+    const mbtiType = r.mbti.type;
+    const ennType = r.enneagram.type;
+    const ennWing = r.enneagram.wing;
+    const discPrimary = r.disc.primary;
+    const discCombo = r.disc.combo || r.disc.primary;
+    const bf = r.bigFive;
+
+    // Header
+    const group = (s && s.mbtiGroup) || 'analyst';
+    const header = $('#guide-header');
+    header.className = 'guide-header header-' + group;
+    $('#guide-title').textContent = s ? s.title : 'People Like You';
+
+    // Combo line
+    const highTraits = ['O','C','E','A','N'].filter(t => bf[t].percentage >= 55).map(t => bf[t].label);
+    $('#guide-combo').textContent = mbtiType + ' \u00B7 Type ' + ennType + 'w' + ennWing + ' \u00B7 ' + discCombo + ' \u00B7 ' + highTraits.join(', ');
+
+    // Build guide sections
+    const sections = generatePersonalityGuide(mbtiType, ennType, ennWing, discPrimary, bf);
+    const body = $('#guide-body');
+    body.innerHTML = '';
+
+    sections.forEach(section => {
+      const el = document.createElement('div');
+      el.className = 'guide-section';
+      el.innerHTML = '<h2 class="guide-section-title">' + section.title + '</h2>' +
+        section.paragraphs.map(p => '<p class="guide-section-text">' + p + '</p>').join('');
+      body.appendChild(el);
+    });
+  }
+
+  function generatePersonalityGuide(mbti, enn, wing, disc, bf) {
+    const isE = mbti[0] === 'E';
+    const isN = mbti[1] === 'N';
+    const isF = mbti[2] === 'F';
+    const isJ = mbti[3] === 'J';
+    const highO = bf.O.percentage >= 55;
+    const highC = bf.C.percentage >= 55;
+    const highA = bf.A.percentage >= 55;
+    const highN = bf.N.percentage >= 55;
+    const lowA = bf.A.percentage < 45;
+    const lowN = bf.N.percentage < 45;
+
+    const sections = [];
+
+    // === WHO YOU ARE ===
+    const whoYouAre = [];
+    if (isE && isF) {
+      whoYouAre.push('You lead with warmth. People feel seen and valued around you because you genuinely care about their experience, and you have the social energy to act on it.');
+    } else if (isE && !isF) {
+      whoYouAre.push('You lead with confidence. People are drawn to your decisiveness and energy. You move fast, think clearly, and bring others along through sheer force of presence.');
+    } else if (!isE && isF) {
+      whoYouAre.push('You lead with depth. You may not be the loudest voice, but the people closest to you know you care more than most. Your emotional intelligence runs deep.');
+    } else {
+      whoYouAre.push('You lead with competence. You think before you speak, plan before you act, and deliver results that speak for themselves. People learn to trust your judgement.');
+    }
+
+    if (enn === 2 || enn === 9) {
+      whoYouAre.push('At your core, you want harmony. Whether you achieve it by helping others (Type ' + enn + ') or by keeping the peace, your instinct is to make sure everyone is OK before you think about yourself.');
+    } else if (enn === 3 || enn === 8) {
+      whoYouAre.push('At your core, you want impact. You are not content to sit on the sidelines. Whether through achievement or sheer force of will, you need to leave a mark.');
+    } else if (enn === 4 || enn === 5) {
+      whoYouAre.push('At your core, you want understanding. The surface level is never enough for you. You dig deeper, think harder, and feel more than most people realise.');
+    } else if (enn === 1) {
+      whoYouAre.push('At your core, you want things to be right. Not just good enough \u2014 right. You hold yourself to standards that most people don\'t even notice exist, and that inner critic is both your superpower and your burden.');
+    } else if (enn === 6) {
+      whoYouAre.push('At your core, you want security. Not because you are afraid, but because you are the one who thinks three steps ahead. You are the person who asks "what if?" when everyone else is already celebrating.');
+    } else {
+      whoYouAre.push('At your core, you want freedom and possibility. Routine is your enemy. You chase new experiences, new ideas, new connections \u2014 and you bring infectious energy to everything you do.');
+    }
+
+    sections.push({ title: 'Who You Are', paragraphs: whoYouAre });
+
+    // === AT YOUR BEST ===
+    const atBest = [];
+    if (isE && highA) {
+      atBest.push('At your best, you are the glue that holds groups together. You create warmth wherever you go and make people feel like they belong. Your social energy combined with genuine care is a rare and powerful combination.');
+    } else if (isE && lowA) {
+      atBest.push('At your best, you are a force of nature. You walk into a room and things start happening. Your directness cuts through noise, and your energy is contagious. People follow you because you make the complex feel simple.');
+    } else if (!isE && highO) {
+      atBest.push('At your best, you see what others miss. Your rich inner world and openness to ideas means you connect dots that nobody else is looking at. When you share your insights, people are often stunned by the depth.');
+    } else if (!isE && highC) {
+      atBest.push('At your best, you are the person everyone relies on. You think things through, follow through on commitments, and produce work that is consistently excellent. Your quiet competence earns deep trust.');
+    } else {
+      atBest.push('At your best, you bring a balanced perspective that few people can match. You can see multiple sides of a situation, weigh them carefully, and arrive at a thoughtful conclusion.');
+    }
+
+    if (disc === 'D' || disc === 'I') {
+      atBest.push('Your ' + (disc === 'D' ? 'Dominant' : 'Influential') + ' working style means you thrive when there is momentum. You push things forward and bring others along. Stagnation is your enemy \u2014 progress is your fuel.');
+    } else {
+      atBest.push('Your ' + (disc === 'S' ? 'Steady' : 'Conscientious') + ' working style means you bring reliability that others count on. You don\'t chase flashy wins \u2014 you build things that last.');
+    }
+
+    sections.push({ title: 'At Your Best', paragraphs: atBest });
+
+    // === YOUR BLIND SPOTS ===
+    const blindSpots = [];
+    if (enn === 2) {
+      blindSpots.push('You give so much that you forget to check if anyone is giving back. Your need to be needed can become a trap \u2014 you start keeping score, even if you won\'t admit it. The question you avoid asking is: "What do I actually need?"');
+    } else if (enn === 1) {
+      blindSpots.push('Your inner critic never sleeps. The standards you hold yourself to are often invisible to others, but they exhaust you. You can come across as rigid or judgemental when really you are just frustrated that the world does not meet the bar you set for yourself.');
+    } else if (enn === 3) {
+      blindSpots.push('You are so focused on achievement that you sometimes lose touch with what you actually want versus what looks impressive. Slowing down feels like falling behind. Your challenge is learning that your worth is not your resume.');
+    } else if (enn === 4) {
+      blindSpots.push('You feel things so deeply that ordinary life can feel flat. You chase intensity and authenticity, which is beautiful \u2014 but it can make you dismiss good things because they do not feel dramatic enough.');
+    } else if (enn === 5) {
+      blindSpots.push('You retreat into your mind when the world gets too much. Knowledge feels safer than vulnerability. Your challenge is stepping out of the observatory and into the arena \u2014 engaging with life, not just analysing it.');
+    } else if (enn === 6) {
+      blindSpots.push('You see threats that others miss, which makes you prepared \u2014 but also anxious. You can get stuck in worst-case thinking and mistake caution for wisdom. Sometimes the brave move is to trust that things will be OK.');
+    } else if (enn === 7) {
+      blindSpots.push('You are brilliant at starting things and terrible at sitting with discomfort. When things get boring, hard, or painful, your instinct is to pivot to something new. Real depth comes from staying, not sprinting.');
+    } else if (enn === 8) {
+      blindSpots.push('You equate vulnerability with weakness, so you armour up. People see your strength but rarely see the full you. Your challenge is letting people in \u2014 not just the ones you protect, but the ones who could protect you.');
+    } else {
+      blindSpots.push('You avoid conflict so well that people sometimes don\'t know what you actually think. You merge with others\' preferences to keep the peace, but over time you lose track of your own desires. Your voice matters \u2014 use it.');
+    }
+
+    if (isF && lowN) {
+      blindSpots.push('You are emotionally attuned but rarely rattled. This makes you a calming presence, but it can also mean you underestimate how much something is affecting you until it builds up.');
+    } else if (!isF && highN) {
+      blindSpots.push('You think logically but feel intensely beneath the surface. Others may not realise how much stress you carry because you process it internally. Finding an outlet \u2014 exercise, journaling, a trusted friend \u2014 is essential.');
+    }
+
+    sections.push({ title: 'Your Blind Spots', paragraphs: blindSpots });
+
+    // === AT WORK ===
+    const atWork = [];
+    if (disc === 'D') {
+      atWork.push('You are results-driven and direct. In meetings, you are the one who says "OK, so what are we actually doing about this?" You have little patience for politics or process for its own sake.');
+    } else if (disc === 'I') {
+      atWork.push('You are the spark in any team. You motivate, persuade, and build momentum through enthusiasm. You are best in roles where you can influence, present, and connect with people.');
+    } else if (disc === 'S') {
+      atWork.push('You are the steady hand. You bring consistency, reliability, and calm to any team. You may not be the flashiest contributor, but things fall apart when you are not there.');
+    } else {
+      atWork.push('You are the quality control. You catch what others miss, set high standards, and take pride in getting things right. You are best in roles where precision and thoroughness are valued.');
+    }
+
+    if (isJ) {
+      atWork.push('You prefer structure. Deadlines, clear expectations, and defined processes bring out your best work. Ambiguity drains you \u2014 clarity fuels you.');
+    } else {
+      atWork.push('You prefer flexibility. Too much structure feels suffocating. You do your best work when you have room to adapt, improvise, and follow your instincts.');
+    }
+
+    if (isN) {
+      atWork.push('You think in big pictures and future possibilities. You are the one who sees where things are heading before others do. Strategy and vision are your natural strengths.');
+    } else {
+      atWork.push('You think in practical, concrete terms. You are the one who turns ideas into action. While others are still theorising, you are already building.');
+    }
+
+    sections.push({ title: 'At Work', paragraphs: atWork });
+
+    // === IN RELATIONSHIPS ===
+    const inRel = [];
+    if (isE && isF) {
+      inRel.push('You love openly and generously. Your friends and partner know exactly where they stand with you because you tell them \u2014 often. You show up for people with your whole self.');
+    } else if (isE && !isF) {
+      inRel.push('You show love through action, not words. You are fiercely loyal and will go to bat for the people you care about. But you can be impatient with emotional processing \u2014 you want to fix the problem, not sit with it.');
+    } else if (!isE && isF) {
+      inRel.push('You love deeply but quietly. The people closest to you get a version of you that the rest of the world never sees. You need a partner who earns that trust and respects your need for space.');
+    } else {
+      inRel.push('You show love through reliability and competence \u2014 showing up, keeping promises, building something solid together. You may not say "I love you" often, but your actions speak volumes.');
+    }
+
+    if (highA) {
+      inRel.push('You are naturally warm and accommodating. You go out of your way to make people comfortable. The risk is over-accommodating \u2014 saying yes when you mean no, and building resentment quietly.');
+    } else if (lowA) {
+      inRel.push('You are honest and direct in relationships \u2014 sometimes uncomfortably so. You would rather have a hard conversation now than let things fester. Not everyone appreciates this, but the people who do become your closest allies.');
+    }
+
+    sections.push({ title: 'In Relationships', paragraphs: inRel });
+
+    // === UNDER PRESSURE ===
+    const pressure = [];
+    if (highN) {
+      pressure.push('Stress hits you hard. You feel the weight of things more than most people, and you can spiral into worry or self-doubt when the pressure is on. Your sensitivity is a strength in calm times and a vulnerability in storms.');
+    } else if (lowN) {
+      pressure.push('You are remarkably calm under fire. While others panic, you stay level-headed and focused. This makes you the person people turn to in a crisis \u2014 but it can also mean you suppress real stress until it catches up with you.');
+    } else {
+      pressure.push('Under pressure, you hold steady but feel the strain. You are neither unflappable nor easily overwhelmed \u2014 you have a realistic awareness of the stakes without letting them paralyse you.');
+    }
+
+    if (enn === 1 || enn === 6) {
+      pressure.push('Your stress response is to tighten control. You make lists, double-check, prepare for every scenario. This is effective up to a point, but past that point it becomes anxiety wearing a productivity mask.');
+    } else if (enn === 7 || enn === 3) {
+      pressure.push('Your stress response is to speed up. You take on more, move faster, and keep busy. It feels productive but it is often avoidance in disguise \u2014 you are outrunning the discomfort instead of facing it.');
+    } else if (enn === 2 || enn === 9) {
+      pressure.push('Your stress response is to focus on others. When things get hard, you pour your energy into helping someone else \u2014 which feels selfless but is sometimes a way to avoid dealing with your own pain.');
+    } else if (enn === 4 || enn === 5) {
+      pressure.push('Your stress response is to withdraw. You pull inward, away from people and noise, to process what is happening. This protects your energy but can leave the people around you feeling shut out.');
+    } else {
+      pressure.push('Your stress response is to take charge. You become more forceful, more direct, and less patient. This gets things done in a crisis but can damage relationships if you are not careful.');
+    }
+
+    sections.push({ title: 'Under Pressure', paragraphs: pressure });
+
+    // === WHAT MAKES YOUR COMBINATION RARE ===
+    const rare = [];
+    // Look for interesting combos
+    if (isE && (enn === 5 || enn === 4)) {
+      rare.push('Your combination is unusual. Most Type ' + enn + 's are introverted, but you bring an extroverted energy to a personality driven by depth and introspection. You are the rare person who can work a room AND have a existential conversation in the corner.');
+    } else if (!isE && (enn === 3 || enn === 7 || enn === 8)) {
+      rare.push('Your combination is uncommon. Type ' + enn + 's are typically high-energy and outward-facing, but you channel that drive inward. You are ambitious and driven, but you do not need an audience. Your intensity runs quiet.');
+    } else if (isF && disc === 'D') {
+      rare.push('You are a Feeling type with a Dominant working style \u2014 which means you push hard for results but genuinely care about the people involved. This gives you a leadership style that is both effective and human. People follow you because they trust you, not because they fear you.');
+    } else if (!isF && highA) {
+      rare.push('You think with logic but act with warmth. Your decisions are rational, but the way you treat people is generous and kind. This makes you unusually effective \u2014 people get the best of both worlds.');
+    } else if (isJ && enn === 7) {
+      rare.push('You crave structure AND adventure, which creates an interesting internal tension. You plan your spontaneity. You want freedom but also want to know the plan. This push-pull makes you adaptable in ways that pure J or pure 7 types cannot be.');
+    } else {
+      rare.push('Your specific combination of ' + mbti + ', Enneagram ' + enn + ', and ' + disc + ' working style creates a personality that does not fit neatly into one box. That is the point \u2014 you are multi-dimensional, and understanding all four frameworks gives you a fuller picture than any single test could.');
+    }
+
+    sections.push({ title: 'What Makes Your Combination Unique', paragraphs: rare });
+
+    return sections;
+  }
 
   // ===== LAZY LOAD html2canvas =====
   function loadHtml2Canvas() {
