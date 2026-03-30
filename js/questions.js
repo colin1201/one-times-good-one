@@ -1652,8 +1652,19 @@ function generateDescription(mbti, enneagram, disc, bigFive) {
     tension = "You see patterns others miss. You just don't always share them.";
   }
 
-  // Line 3: The tease — pull them into the guide
-  const tease = "Your full personality guide breaks down what this means for your relationships, your blind spots, and what makes your specific combination rare.";
+  // Line 3: Natural nudge — not salesy, just curiosity
+  const teases = {
+    1: "There's a reason you're so hard on yourself. And a reason people trust you for it.",
+    2: "The way you love is your superpower. It's also the thing that exhausts you most.",
+    3: "You've built your life around winning. But what happens when you stop?",
+    4: "Your depth is real. So is the loneliness that sometimes comes with it.",
+    5: "You understand more than you let on. The question is what you do with it.",
+    6: "Your loyalty runs deep. So does the anxiety you rarely talk about.",
+    7: "Your energy is contagious. But you know what you're running from.",
+    8: "People see your strength. Almost nobody sees what's underneath.",
+    9: "You keep the peace. But at what cost to yourself?"
+  };
+  const tease = teases[enn] || "There's more to this. Tap below to see the full picture.";
 
   return hook + "\n" + tension + "\n" + tease;
 }
