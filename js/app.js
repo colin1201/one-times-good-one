@@ -1048,12 +1048,18 @@
       atBest.push('At your best, you are the glue that holds groups together. You create warmth wherever you go and make people feel like they belong. Your social energy combined with genuine care is a rare and powerful combination.');
     } else if (isE && lowA) {
       atBest.push('At your best, you are a force of nature. You walk into a room and things start happening. Your directness cuts through noise, and your energy is contagious. People follow you because you make the complex feel simple.');
+    } else if (isE && highC) {
+      atBest.push('At your best, you get things done AND bring people along for the ride. You combine social energy with discipline \u2014 a combination that makes you effective in almost any environment.');
+    } else if (isE) {
+      atBest.push('At your best, you energise every room you walk into. Your enthusiasm is genuine, and people are drawn to your openness. You make others feel like anything is possible.');
     } else if (!isE && highO) {
       atBest.push('At your best, you see what others miss. Your rich inner world and openness to ideas means you connect dots that nobody else is looking at. When you share your insights, people are often stunned by the depth.');
     } else if (!isE && highC) {
       atBest.push('At your best, you are the person everyone relies on. You think things through, follow through on commitments, and produce work that is consistently excellent. Your quiet competence earns deep trust.');
+    } else if (!isE && highA) {
+      atBest.push('At your best, you are a quiet anchor for the people around you. You listen without judgement, support without conditions, and create a sense of safety that allows others to be vulnerable.');
     } else {
-      atBest.push('At your best, you bring a balanced perspective that few people can match. You can see multiple sides of a situation, weigh them carefully, and arrive at a thoughtful conclusion.');
+      atBest.push('At your best, you bring a clarity that cuts through noise. You are not easily swayed by emotion or groupthink. When you speak, it is because you have something worth saying \u2014 and people listen.');
     }
 
     if (disc === 'D' || disc === 'I') {
@@ -1168,17 +1174,29 @@
     const rare = [];
     // Look for interesting combos
     if (isE && (enn === 5 || enn === 4)) {
-      rare.push('Your combination is unusual. Most Type ' + enn + 's are introverted, but you bring an extroverted energy to a personality driven by depth and introspection. You are the rare person who can work a room AND have a existential conversation in the corner.');
+      rare.push('Your combination is unusual. Most Type ' + enn + 's are introverted, but you bring an extroverted energy to a personality driven by depth and introspection. You are the rare person who can work a room AND have an existential conversation in the corner.');
     } else if (!isE && (enn === 3 || enn === 7 || enn === 8)) {
       rare.push('Your combination is uncommon. Type ' + enn + 's are typically high-energy and outward-facing, but you channel that drive inward. You are ambitious and driven, but you do not need an audience. Your intensity runs quiet.');
     } else if (isF && disc === 'D') {
-      rare.push('You are a Feeling type with a Dominant working style \u2014 which means you push hard for results but genuinely care about the people involved. This gives you a leadership style that is both effective and human. People follow you because they trust you, not because they fear you.');
+      rare.push('You are a Feeling type with a Dominant working style \u2014 which means you push hard for results but genuinely care about the people involved. This gives you a leadership style that is both effective and human.');
     } else if (!isF && highA) {
       rare.push('You think with logic but act with warmth. Your decisions are rational, but the way you treat people is generous and kind. This makes you unusually effective \u2014 people get the best of both worlds.');
     } else if (isJ && enn === 7) {
       rare.push('You crave structure AND adventure, which creates an interesting internal tension. You plan your spontaneity. You want freedom but also want to know the plan. This push-pull makes you adaptable in ways that pure J or pure 7 types cannot be.');
+    } else if (!isJ && enn === 1) {
+      rare.push('You are a Perceiver with a Perfectionist core \u2014 which means your inner critic is constantly at odds with your flexible nature. You want things to be right, but you also resist rigid systems. This tension makes you uniquely good at finding better ways to do things.');
+    } else if (isE && enn === 9) {
+      rare.push('You are social and outgoing, but your core drive is peace, not attention. Unlike most extroverts who seek stimulation, you seek harmony. You are the rare person who can be the life of the party and the calm in the storm.');
+    } else if (!isE && enn === 2) {
+      rare.push('You care deeply about others but recharge alone. Most Helpers are outwardly expressive, but you show love through quiet, thoughtful actions rather than grand gestures. People often do not realise how much you do for them until you stop.');
+    } else if (isF && disc === 'C') {
+      rare.push('You combine emotional intelligence with analytical precision. You can read a room AND read a spreadsheet. This dual fluency makes you the person who can translate between the "people" side and the "data" side of any situation.');
+    } else if (highO && !isN) {
+      rare.push('You are open to new ideas but grounded in reality \u2014 an unusual combination. While most open-minded people are abstract thinkers, you filter new concepts through a practical lens. You are an innovator who actually ships.');
+    } else if (highN && lowA) {
+      rare.push('You feel deeply but express it as directness rather than softness. People may see you as tough, but beneath the surface you process emotions more intensely than most. This creates a complex interior life that few people get to see.');
     } else {
-      rare.push('Your specific combination of ' + mbti + ', Enneagram ' + enn + ', and ' + disc + ' working style creates a personality that does not fit neatly into one box. That is the point \u2014 you are multi-dimensional, and understanding all four frameworks gives you a fuller picture than any single test could.');
+      rare.push('As a ' + mbti + ' with Enneagram ' + enn + ' and a ' + (disc === 'D' ? 'Dominant' : disc === 'I' ? 'Influential' : disc === 'S' ? 'Steady' : 'Conscientious') + ' working style, you blend traits that do not usually sit together. That tension is actually your strength \u2014 it gives you range that single-type descriptions cannot capture.');
     }
 
     sections.push({ title: 'What Makes Your Combination Unique', paragraphs: rare });
