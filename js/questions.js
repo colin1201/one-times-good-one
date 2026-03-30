@@ -1613,54 +1613,49 @@ function generateCreativeTitle(mbti, enneagram, disc, bigFive) {
 }
 
 function generateDescription(mbti, enneagram, disc, bigFive) {
-  const sentences = [];
+  // Teaser copy — hook them to read the full guide
+  const isE = mbti.type[0] === "E";
+  const isF = mbti.type[2] === "F";
+  const enn = enneagram.type;
 
-  // Sentence 1: E/I energy style
-  if (mbti.type[0] === "E") {
-    sentences.push("You come alive around people and draw energy from connection.");
+  // Line 1: The hook — something surprising or personal
+  const hooks = {
+    1: "You hold yourself to standards most people don't even know exist.",
+    2: "You remember what people need before they even ask.",
+    3: "You've been quietly competing with everyone since you were five.",
+    4: "You've always felt like you see the world differently. You're right.",
+    5: "Your mind is your sanctuary. Also, occasionally, your prison.",
+    6: "You're the one who thinks of everything that could go wrong. And you're usually right.",
+    7: "You've turned avoiding boredom into an art form.",
+    8: "People know not to test you. The ones who did learned the hard way.",
+    9: "You're the calm in everyone else's storm. But who calms yours?"
+  };
+  const hook = hooks[enn] || "You're more complex than any single label could capture.";
+
+  // Line 2: The tension — what makes their combo interesting
+  let tension;
+  if (isE && (enn === 4 || enn === 5)) {
+    tension = "You're social on the outside, deep on the inside. Most people only see one half.";
+  } else if (!isE && (enn === 3 || enn === 7 || enn === 8)) {
+    tension = "Your ambition runs quiet. You don't need an audience to be driven.";
+  } else if (isF && disc.primary === "D") {
+    tension = "You push hard for results but lose sleep over how people felt about it.";
+  } else if (!isF && bigFive.A && bigFive.A.percentage >= 60) {
+    tension = "You think with logic but treat people with warmth. It's a rare combination.";
+  } else if (isE && isF) {
+    tension = "You pour energy into people. The question is whether you save any for yourself.";
+  } else if (isE && !isF) {
+    tension = "You move fast and speak directly. Not everyone keeps up.";
+  } else if (!isE && isF) {
+    tension = "You care more than you show. The people closest to you know this.";
   } else {
-    sentences.push("You think deeply and recharge in solitude.");
+    tension = "You see patterns others miss. You just don't always share them.";
   }
 
-  // Sentence 2: Enneagram core motivation
-  const motivations = {
-    1: "You want to do what's right and improve everything you touch.",
-    2: "You earn love by loving fiercely first.",
-    3: "You're driven to succeed and be recognised.",
-    4: "You crave authenticity and meaning in everything.",
-    5: "You need to understand the world before you engage with it.",
-    6: "You're the loyal one who sticks around when everyone else leaves.",
-    7: "You chase joy and possibility — life is your adventure.",
-    8: "You protect what matters and lead with strength.",
-    9: "You seek peace — within yourself and between the people you love."
-  };
-  sentences.push(motivations[enneagram.type] || "");
+  // Line 3: The tease — pull them into the guide
+  const tease = "Your full personality guide breaks down what this means for your relationships, your blind spots, and what makes your specific combination rare.";
 
-  // Sentence 3: DISC working style
-  const discStyles = {
-    D: "At work, you lead with decisiveness — you'd rather act fast and adjust than wait for perfect.",
-    I: "At work, you bring the energy — you rally people and make things happen through enthusiasm.",
-    S: "At work, you're the steady hand — reliable, patient, and the glue that holds teams together.",
-    C: "At work, you bring precision — you set high standards and sweat the details others miss."
-  };
-  if (disc && disc.primary) {
-    sentences.push(discStyles[disc.primary] || "");
-  }
-
-  // Sentence 4: Big Five highlight
-  if (bigFive) {
-    if (bigFive.O && bigFive.O.percentage >= 65) {
-      sentences.push("Your curiosity and openness to new ideas set you apart.");
-    } else if (bigFive.O && bigFive.O.percentage <= 35) {
-      sentences.push("You're grounded in reality and trust what's proven to work.");
-    } else if (bigFive.N && bigFive.N.percentage >= 65) {
-      sentences.push("You feel things deeply — and that sensitivity is both your gift and your challenge.");
-    } else if (bigFive.N && bigFive.N.percentage <= 35) {
-      sentences.push("You're emotionally steady — the calm in everyone else's storm.");
-    }
-  }
-
-  return sentences.filter(s => s.length > 0).join(" ");
+  return hook + "\n" + tension + "\n" + tease;
 }
 
 

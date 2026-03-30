@@ -995,7 +995,14 @@
       const el = document.createElement('div');
       el.className = 'guide-section';
       el.innerHTML = '<h2 class="guide-section-title">' + section.title + '</h2>' +
-        section.paragraphs.map(p => '<p class="guide-section-text">' + p + '</p>').join('');
+        section.paragraphs.map(p => {
+          // Bold the first sentence of each paragraph for scannability
+          const firstDot = p.indexOf('.');
+          if (firstDot > 0 && firstDot < 80) {
+            return '<p class="guide-section-text"><strong>' + p.substring(0, firstDot + 1) + '</strong>' + p.substring(firstDot + 1) + '</p>';
+          }
+          return '<p class="guide-section-text">' + p + '</p>';
+        }).join('');
       body.appendChild(el);
     });
   }
@@ -1099,32 +1106,6 @@
     }
 
     sections.push({ title: 'Your Blind Spots', paragraphs: blindSpots });
-
-    // === AT WORK ===
-    const atWork = [];
-    if (disc === 'D') {
-      atWork.push('You are results-driven and direct. In meetings, you are the one who says "OK, so what are we actually doing about this?" You have little patience for politics or process for its own sake.');
-    } else if (disc === 'I') {
-      atWork.push('You are the spark in any team. You motivate, persuade, and build momentum through enthusiasm. You are best in roles where you can influence, present, and connect with people.');
-    } else if (disc === 'S') {
-      atWork.push('You are the steady hand. You bring consistency, reliability, and calm to any team. You may not be the flashiest contributor, but things fall apart when you are not there.');
-    } else {
-      atWork.push('You are the quality control. You catch what others miss, set high standards, and take pride in getting things right. You are best in roles where precision and thoroughness are valued.');
-    }
-
-    if (isJ) {
-      atWork.push('You prefer structure. Deadlines, clear expectations, and defined processes bring out your best work. Ambiguity drains you \u2014 clarity fuels you.');
-    } else {
-      atWork.push('You prefer flexibility. Too much structure feels suffocating. You do your best work when you have room to adapt, improvise, and follow your instincts.');
-    }
-
-    if (isN) {
-      atWork.push('You think in big pictures and future possibilities. You are the one who sees where things are heading before others do. Strategy and vision are your natural strengths.');
-    } else {
-      atWork.push('You think in practical, concrete terms. You are the one who turns ideas into action. While others are still theorising, you are already building.');
-    }
-
-    sections.push({ title: 'At Work', paragraphs: atWork });
 
     // === IN RELATIONSHIPS ===
     const inRel = [];
