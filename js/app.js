@@ -590,9 +590,10 @@
     header.className = 'results-header';
     header.classList.add('header-' + (summary.mbtiGroup || 'analyst'));
 
+    $('#results-tagline').textContent = summary.thinkOf || '';
     $('#summary-label').textContent = '';
     $('#summary-title').textContent = summary.title || '';
-    $('#summary-think').textContent = summary.thinkOf || '';
+    $('#summary-think').style.display = 'none';
 
     const descEl = $('#summary-description');
     descEl.innerHTML = '';
