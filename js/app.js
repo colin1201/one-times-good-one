@@ -556,7 +556,7 @@
       case 'bigFive': {
         const traitNames = { O: 'Openness', C: 'Conscientiousness', E: 'Extraversion', A: 'Agreeableness', N: 'Neuroticism' };
         const labels = Object.entries(r).map(([k, v]) => v.label).join(' · ');
-        const descriptions = Object.entries(r).map(([k, v]) => `${traitNames[k]} (${v.percentage}%): ${v.description}`);
+        const descriptions = Object.entries(r).map(([k, v]) => `**${traitNames[k]} (${v.percentage}%):** ${v.description}`);
         const b5Expandable = [];
         if (typeof PERSONALITY_DATA !== 'undefined') {
           Object.entries(r).forEach(([k, v]) => {
@@ -783,14 +783,16 @@
     }
 
     // Split description into one sentence/section per line
-    const rawDesc = display.description.replace(/\*\*/g, '');
+    const rawDesc = display.description;
     const blocks = rawDesc.split('\n').filter(b => b.trim());
     blocks.forEach(block => {
       const sentences = block.split(/(?<=\.)\s+/);
       sentences.forEach(sentence => {
         if (sentence.trim()) {
           const p = document.createElement('p');
-          p.textContent = sentence.trim();
+          // Convert **text** to <strong>text</strong>
+          const html = sentence.trim().replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+          p.innerHTML = html;
           p.style.marginBottom = '10px';
           descEl.appendChild(p);
         }
