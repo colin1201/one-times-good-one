@@ -1545,11 +1545,58 @@ function generateSummary(results) {
   // --- Description ---
   const description = generateDescription(mbti, enneagram, disc, bigFive);
 
+  // --- "Think: X meets Y" character reference ---
+  const thinkOf = generateThinkOf(mbti, enneagram);
+
   return {
     title: title,
     description: description,
+    thinkOf: thinkOf,
     traits: uniqueTraits.slice(0, 8) // Top 8 traits
   };
+}
+
+function generateThinkOf(mbti, enneagram) {
+  // MBTI side — represents their cognitive/energy style
+  const mbtiPeople = {
+    INTJ: "Christopher Nolan",
+    INTP: "Bill Gates",
+    ENTJ: "Steve Jobs",
+    ENTP: "Ryan Reynolds",
+    INFJ: "Keanu Reeves",
+    INFP: "Johnny Depp",
+    ENFJ: "Oprah",
+    ENFP: "Robin Williams",
+    ISTJ: "Warren Buffett",
+    ISFJ: "Kate Middleton",
+    ESTJ: "Judge Judy",
+    ESFJ: "Taylor Swift",
+    ISTP: "Clint Eastwood",
+    ISFP: "Bob Dylan",
+    ESTP: "Dwayne Johnson",
+    ESFP: "Jamie Oliver"
+  };
+
+  // Enneagram side — represents their core drive
+  const ennPeople = {
+    1: "Michelle Obama",
+    2: "Princess Diana",
+    3: "Beyonce",
+    4: "Amy Winehouse",
+    5: "Stephen Hawking",
+    6: "Tom Hanks",
+    7: "Anthony Bourdain",
+    8: "Serena Williams",
+    9: "Bob Marley"
+  };
+
+  const person1 = mbtiPeople[mbti.type] || "someone unique";
+  const person2 = ennPeople[enneagram.type] || "someone rare";
+
+  // Avoid duplicates (e.g., if both maps return the same person)
+  if (person1 === person2) return "Think: " + person1 + ", but make it complicated";
+
+  return "Think: " + person1 + " meets " + person2;
 }
 
 function generateCreativeTitle(mbti, enneagram, disc, bigFive) {

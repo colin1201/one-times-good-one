@@ -592,6 +592,7 @@
 
     $('#summary-label').textContent = '';
     $('#summary-title').textContent = summary.title || '';
+    $('#summary-think').textContent = summary.thinkOf || '';
 
     const descEl = $('#summary-description');
     descEl.innerHTML = '';
@@ -984,9 +985,9 @@
     header.className = 'guide-header header-' + group;
     $('#guide-title').textContent = s ? s.title : 'People Like You';
 
-    // Combo line
+    // Combo line + think of
     const highTraits = ['O','C','E','A','N'].filter(t => bf[t].percentage >= 55).map(t => bf[t].label);
-    $('#guide-combo').textContent = mbtiType + ' \u00B7 Type ' + ennType + 'w' + ennWing + ' \u00B7 ' + discCombo + ' \u00B7 ' + highTraits.join(', ');
+    $('#guide-combo').innerHTML = (s && s.thinkOf ? '<em>' + s.thinkOf + '</em><br>' : '') + mbtiType + ' \u00B7 Type ' + ennType + 'w' + ennWing + ' \u00B7 ' + discCombo;
 
     // Build guide sections
     const sections = generatePersonalityGuide(mbtiType, ennType, ennWing, discPrimary, bf);
@@ -1251,7 +1252,7 @@
           await navigator.share({
             files: [file],
             title: 'My Personality Results',
-            text: `I'm "${state.summary.title}". What about you?\n${siteURL}`
+            text: `I'm "${state.summary.title}" (${state.summary.thinkOf || ''}). What about you?\n${siteURL}`
           });
           return;
         }
