@@ -73,11 +73,33 @@
 
   trackEvent('landed');
 
-  function showScreen(name) {
+  let currentScreen = 'landing';
+
+  function showScreen(name, addHistory) {
     Object.values(screens).forEach(s => s.classList.remove('active'));
     screens[name].classList.add('active');
     window.scrollTo(0, 0);
+
+    // Push to browser history so phone back button works
+    if (addHistory !== false && name !== currentScreen) {
+      history.pushState({ screen: name }, '', '');
+    }
+    currentScreen = name;
   }
+
+  // Handle phone back button
+  window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.screen) {
+      showScreen(e.state.screen, false);
+    } else {
+      // No state — go to results if we have them, otherwise landing
+      if (state.results) {
+        showScreen('results', false);
+      } else {
+        showScreen('landing', false);
+      }
+    }
+  });
 
   // ===== #1: NAME VALIDATION WITH ERROR MESSAGE =====
   function showError(input, msg) {
@@ -478,6 +500,8 @@
       // Switch screen and start reveal behind the overlay
       Object.values(screens).forEach(s => s.classList.remove('active'));
       screens.results.classList.add('active');
+      history.pushState({ screen: 'results' }, '', '');
+      currentScreen = 'results';
 
       const card = $('#shareable-card');
       card.classList.add('results-reveal');
