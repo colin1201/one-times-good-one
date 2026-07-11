@@ -1358,6 +1358,14 @@ function calculateMBTI(rawScores) {
 }
 
 function calculateEnneagram(rawScores) {
+  // NOTE: ranked on RAW sums, deliberately NOT normalised by per-type max.
+  // Normalising by theoretical max (as done for DISC) was tested and made
+  // real-profile accuracy WORSE (founder suite 4/5 -> 2/5): it over-rewards
+  // types that have fewer scoring questions, since they reach a high ratio
+  // on very little signal. The genuine headroom/acquiescence bias (all
+  // enneagram questions are positively keyed, so an agree-to-everything
+  // responder skews toward the highest-question-count type) is better fixed
+  // by reverse-keying some questions — a content change, out of scope here.
   const types = [];
   for (let i = 1; i <= 9; i++) {
     types.push({ type: i, score: rawScores["enneagram_" + i] || 0 });
@@ -1367,7 +1375,6 @@ function calculateEnneagram(rawScores) {
   types.sort((a, b) => b.score - a.score);
 
   const primaryType = types[0].type;
-  const primaryScore = types[0].score;
 
   // Wing is the adjacent type (primaryType +/- 1) with the higher score
   const wingCandidates = [
@@ -1400,15 +1407,26 @@ function calculateEnneagram(rawScores) {
 }
 
 function calculateDISC(rawScores) {
+  // Styles have unequal question counts/weights, so raw sums have unequal
+  // headroom. Compute each style's max possible (centred max 2 * |weight|)
+  // and rank on the normalised ratio, not the raw sum.
+  const styleMaxes = { D: 0, I: 0, S: 0, C: 0 };
+  QUESTIONS.forEach(q => {
+    Object.entries(q.scoring).forEach(([key, weight]) => {
+      const m = key.match(/^disc_([DISC])$/);
+      if (m) styleMaxes[m[1]] += Math.abs(weight) * 2;
+    });
+  });
+
   const styles = [
     { letter: "D", score: rawScores["disc_D"] || 0 },
     { letter: "I", score: rawScores["disc_I"] || 0 },
     { letter: "S", score: rawScores["disc_S"] || 0 },
     { letter: "C", score: rawScores["disc_C"] || 0 }
-  ];
+  ].map(s => ({ ...s, normalized: s.score / (styleMaxes[s.letter] || 1) }));
 
-  // Sort by score descending
-  styles.sort((a, b) => b.score - a.score);
+  // Sort by normalised score descending
+  styles.sort((a, b) => b.normalized - a.normalized);
 
   const primary = styles[0].letter;
   const secondary = styles[1].letter;
@@ -1441,15 +1459,25 @@ function calculateBigFive(rawScores, questionCounts) {
   const traits = ["O", "C", "E", "A", "N"];
   const result = {};
 
+  // Most weights are +/-1, not +/-2, so the old "count * 4" (which assumed
+  // every weight was 2) overstated the max and squashed percentages toward
+  // 50%. Compute each trait's true max from the question weights — the same
+  // pattern calculateMBTI uses: a question contributes |weight| * 2 at most.
+  const traitMaxes = { O: 0, C: 0, E: 0, A: 0, N: 0 };
+  QUESTIONS.forEach(q => {
+    Object.entries(q.scoring).forEach(([key, weight]) => {
+      traits.forEach(t => {
+        if (key === "ocean_" + t) traitMaxes[t] += Math.abs(weight) * 2;
+      });
+    });
+  });
+
   traits.forEach(trait => {
     const key = "ocean_" + trait;
     const raw = rawScores[key] || 0;
-    const count = questionCounts[key] || 1;
 
-    // Normalise to 0-100 percentage
-    // Each question can contribute max ~4 points (centred score of 2 * weight of 2)
-    // So max possible = count * 4, min possible = count * -4
-    const maxPossible = count * 4;
+    // Normalise to 0-100 percentage against the trait's true max headroom
+    const maxPossible = traitMaxes[trait] || 1;
     const percentage = Math.min(100, Math.max(0, Math.round(((raw + maxPossible) / (2 * maxPossible)) * 100)));
 
     const traitData = PERSONALITY_DATA.bigFive[trait];

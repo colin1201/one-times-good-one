@@ -41,7 +41,9 @@
   const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwpmyPKLinf0FH8JRKmqbkd7LZR2LJg9Ho6VxGHCXpgoHZLss_i90PG1gueEwOSDK2OgA/exec';
 
   // ===== FUNNEL ANALYTICS =====
-  const SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  // #5: a resumed session reuses its persisted ID (set in resumeQuiz), so
+  // funnel rows for one person stay tied together across page loads.
+  let SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const trackedEvents = {};
   function trackEvent(event) {
     if (!SHEET_WEBHOOK_URL || trackedEvents[event]) return;
@@ -71,7 +73,8 @@
     explore: $('#explore')
   };
 
-  trackEvent('landed');
+  // #4: 'landed' is fired in INIT, AFTER the shared-results-link check, so a
+  // friend viewing someone's #r= link is logged as 'shared_view', not 'landed'.
 
   let currentScreen = 'landing';
 
@@ -173,6 +176,8 @@
 
   function loadQuestion() {
     const q = state.questions[state.currentIndex];
+    // #10: defensive guard — never leave the UI stuck on "Loading question..."
+    if (!q) { finishQuiz(); return; }
     const total = state.questions.length;
     const num = state.currentIndex + 1;
 
@@ -357,7 +362,8 @@
         if (state.currentIndex === 45) trackEvent('q45');
         if (state.currentIndex === 60) trackEvent('q60');
         if (state.currentIndex >= state.questions.length) {
-          clearProgress(); // #2: clear saved progress on completion
+          // #9: progress is cleared inside finishQuiz, AFTER the results hash is
+          // written — so a reload during the reveal animation isn't stranded.
           state.inputLocked = false;
           finishQuiz();
         } else {
@@ -411,6 +417,7 @@
   function saveProgress() {
     try {
       const data = {
+        sessionId: SESSION_ID, // #5: keep the funnel ID across resumes
         userName: state.userName,
         firstName: state.firstName,
         lastName: state.lastName,
@@ -430,8 +437,9 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const data = JSON.parse(raw);
-      // Expire after 24 hours
-      if (Date.now() - data.savedAt > 24 * 60 * 60 * 1000) {
+      // #10: a missing savedAt is a corrupt/legacy blob — treat as expired.
+      // Otherwise expire after 24 hours.
+      if (!data.savedAt || Date.now() - data.savedAt > 24 * 60 * 60 * 1000) {
         clearProgress();
         return null;
       }
@@ -444,17 +452,38 @@
   }
 
   function resumeQuiz(saved) {
+    // #5: reuse the persisted funnel ID so resumed rows tie to the same session
+    if (saved.sessionId) SESSION_ID = saved.sessionId;
+
     state.userName = saved.userName;
     state.firstName = saved.firstName;
     state.lastName = saved.lastName;
-    state.answers = saved.answers;
-    state.highWaterMark = saved.highWaterMark;
+    state.answers = saved.answers || [];
+    state.highWaterMark = saved.highWaterMark || 0;
     state.halfwayShown = saved.halfwayShown;
-    state.currentIndex = saved.currentIndex;
+    state.currentIndex = saved.currentIndex || 0;
 
     // Rebuild shuffled question order from saved IDs
     const allQ = typeof QUESTIONS !== 'undefined' ? QUESTIONS : [];
     state.questions = saved.questionIds.map(id => allQ.find(q => q.id === id)).filter(Boolean);
+
+    // #10: the live question set may have changed since this progress was saved.
+    // If nothing survives, start fresh; otherwise clamp the pointer so we never
+    // strand the UI on "Loading question..." pointing past the end.
+    if (state.questions.length === 0) {
+      clearProgress();
+      showScreen('landing');
+      return;
+    }
+    if (state.currentIndex >= state.questions.length) state.currentIndex = state.questions.length - 1;
+    if (state.currentIndex < 0) state.currentIndex = 0;
+    if (state.highWaterMark > state.questions.length) state.highWaterMark = state.questions.length;
+
+    // #5: replay the funnel milestones already passed so resumed rows aren't full of holes
+    trackEvent('started');
+    [[8, 'q8'], [15, 'q15'], [30, 'q30'], [45, 'q45'], [60, 'q60']].forEach(([n, ev]) => {
+      if (state.currentIndex >= n) trackEvent(ev);
+    });
 
     showScreen('quiz');
     loadQuestion();
@@ -473,6 +502,12 @@
       state.summary = state.summary || {};
       state.summary.mbtiGroup = MBTI_GROUPS[state.results.mbti.type] || 'analyst';
     }
+
+    // #9: write the shareable results hash immediately, THEN clear saved progress.
+    // A reload during the 1.8s reveal now lands on the results (decoded from the
+    // hash) instead of an empty screen with progress already wiped.
+    encodeResultsToURL();
+    clearProgress();
 
     // Save results to Google Sheet (if webhook is configured)
     sendResultsToSheet();
@@ -665,72 +700,8 @@
 
   }
 
-  // Story card removed — Instagram/WhatsApp now share the results card directly
-  function renderStoryCard() {
-    const { results, summary, userName } = state;
-    if (!results) return;
-
-    const group = (summary && summary.mbtiGroup) || 'analyst';
-
-    // Set gradient background on the card
-    const card = $('#story-card');
-    const gradients = {
-      analyst:  'linear-gradient(160deg, #1a2340 0%, #2d4a7a 40%, #4a6cf7 100%)',
-      diplomat: 'linear-gradient(160deg, #3d1a2a 0%, #7a2d4a 40%, #e8567f 100%)',
-      sentinel: 'linear-gradient(160deg, #1a3d2a 0%, #2d7a4a 40%, #2d9b6e 100%)',
-      explorer: 'linear-gradient(160deg, #3d2a1a 0%, #7a5a2d 40%, #d49128 100%)'
-    };
-    card.style.background = gradients[group] || gradients.analyst;
-
-    // Name
-    $('#story-name').textContent = userName;
-
-    // Creative title
-    const storyTitle = document.getElementById('story-title');
-    if (storyTitle) {
-      storyTitle.textContent = summary ? summary.title : '';
-    }
-
-    // Build result lines
-    const lines = [];
-
-    if (results.mbti) {
-      lines.push({ label: 'MBTI', value: results.mbti.type });
-    }
-    if (results.enneagram) {
-      lines.push({ label: 'Enneagram', value: results.enneagram.type + 'w' + results.enneagram.wing });
-    }
-    if (results.disc) {
-      lines.push({ label: 'DISC', value: results.disc.combo || results.disc.primary });
-    }
-
-    const resultsContainer = $('#story-results');
-    resultsContainer.innerHTML =
-      '<div class="story-results-grid">' +
-      lines.map(l =>
-        `<div class="story-result-cell">
-          <span class="story-result-value">${l.value}</span>
-          <span class="story-result-label">${l.label}</span>
-        </div>`
-      ).join('') +
-      '</div>';
-
-    // Big Five bars
-    const bigFiveContainer = $('#story-bigfive');
-    bigFiveContainer.innerHTML = '';
-    if (results.bigFive) {
-      const traitNames = { O: 'Openness', C: 'Conscientiousness', E: 'Extraversion', A: 'Agreeableness', N: 'Neuroticism' };
-      bigFiveContainer.innerHTML = '<span class="story-result-label" style="display:block; margin-bottom:20px;">Big Five</span>' +
-        ['O', 'C', 'E', 'A', 'N'].map(k => {
-          const pct = results.bigFive[k].percentage;
-          return `<div class="story-b5-row">
-            <span class="story-b5-label">${traitNames[k]}</span>
-            <div class="story-b5-track"><div class="story-b5-fill" style="width:${pct}%"></div></div>
-            <span class="story-b5-pct">${pct}%</span>
-          </div>`;
-        }).join('');
-    }
-  }
+  // #11: dead renderStoryCard() removed — it referenced #story-card / #story-*
+  // elements that don't exist in index.html and was never called.
 
   // ===== BAR HELPERS (data-width for animated reveal) =====
   function mbtiBar(posLetter, negLetter, pref) {
@@ -1255,7 +1226,8 @@
 
   // ===== SHARE RESULTS WITH FRIENDS =====
   $('#btn-share-instagram').addEventListener('click', async () => {
-    trackEvent('shared');
+    // #6: 'shared' is fired only after a share/download actually succeeds
+    // (below), NOT on click — a cancelled share must not count.
     try {
       await loadHtml2Canvas();
       const cards = forceCardsVisible();
@@ -1279,6 +1251,7 @@
             title: 'My Personality Results',
             text: `I'm "${state.summary.title}" (${state.summary.thinkOf || ''}). What about you?\n${siteURL}`
           });
+          trackEvent('shared'); // #6: only counts a share that actually resolved
           return;
         }
       }
@@ -1288,6 +1261,7 @@
       link.download = filename;
       link.href = canvas.toDataURL('image/png');
       link.click();
+      trackEvent('shared'); // #6: download-fallback success also counts
       alert('Image saved! Open Instagram and share it to your story or feed.');
     } catch (err) {
       if (err.name !== 'AbortError') {
@@ -1398,7 +1372,15 @@
 
   // ===== INIT =====
   // Check URL for shared results first
-  if (decodeResultsFromURL()) return;
+  if (decodeResultsFromURL()) {
+    // #4: viewing a friend's shared link is a distinct funnel event, not a landing.
+    // (The Apps Script webhook appends any event name verbatim, so this is safe.)
+    trackEvent('shared_view');
+    return;
+  }
+
+  // #4: only a real first-party visitor counts as 'landed'
+  trackEvent('landed');
 
   // #2: Check for saved progress
   const saved = loadProgress();
