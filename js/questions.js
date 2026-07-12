@@ -8,12 +8,10 @@ const QUESTIONS = [
   // --- Q1-10: Social energy, leadership, emotional expression ---
   {
     id: 1,
-    text: "I feel energised after spending time with a large group of people.",
+    text: "A big group leaves me drained — I feel more like myself after some quiet time alone.",
     scoring: {
-      "mbti_E": 2,
-      "ocean_E": 2,
-      "disc_I": 1,
-      "enneagram_7": 1
+      "mbti_E": -2,
+      "ocean_E": -2
     }
   },
   {
@@ -146,12 +144,10 @@ const QUESTIONS = [
   },
   {
     id: 15,
-    text: "I find it easy to motivate and persuade other people.",
+    text: "I'd rather let someone else do the persuading — rallying a group isn't really my thing.",
     scoring: {
-      "disc_I": 2,
-      "mbti_E": 1,
-      "ocean_E": 1,
-      "enneagram_3": 1
+      "mbti_E": -1,
+      "ocean_E": -1
     }
   },
   {
@@ -342,13 +338,10 @@ const QUESTIONS = [
   },
   {
     id: 34,
-    text: "I'm energised by brainstorming sessions and bouncing ideas off other people.",
+    text: "I do my best thinking on my own — group brainstorms drain me more than energise me.",
     scoring: {
-      "mbti_E": 1,
-      "ocean_O": 1,
-      "disc_I": 1,
-      "ocean_E": 1,
-      "enneagram_7": 1
+      "mbti_E": -1,
+      "ocean_E": -1
     }
   },
   {
@@ -504,12 +497,10 @@ const QUESTIONS = [
   },
   {
     id: 50,
-    text: "I like being part of a team more than working alone.",
+    text: "I get more done — and feel more like myself — working alone than on a team.",
     scoring: {
-      "mbti_E": 1,
-      "disc_I": 1,
-      "disc_S": 1,
-      "ocean_E": 1
+      "mbti_E": -1,
+      "ocean_E": -1
     }
   },
 
@@ -587,12 +578,11 @@ const QUESTIONS = [
   },
   {
     id: 58,
-    text: "When working on a team, I naturally step into the role of motivating and encouraging others.",
+    text: "On a team, I'd rather contribute quietly in the background than be the one rallying everyone.",
     scoring: {
-      "disc_I": 2,
-      "ocean_E": 1,
+      "ocean_E": -1,
       "enneagram_2": 1,
-      "mbti_E": 1
+      "mbti_E": -1
     }
   },
   {
@@ -659,11 +649,10 @@ const QUESTIONS = [
   },
   {
     id: 65,
-    text: "After a long week, catching up with friends gives me more energy than staying in.",
+    text: "After a long week, I recharge by staying in — more than by going out to catch up with friends.",
     scoring: {
-      "mbti_E": 2,
-      "ocean_E": 2,
-      "disc_I": 1
+      "mbti_E": -2,
+      "ocean_E": -2
     }
   },
   {
