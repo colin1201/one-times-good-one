@@ -10,14 +10,28 @@
 
 function doGet(e) {
   var p = e.parameter || {};
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var lock = LockService.getScriptLock();
 
-  if (p.analytics === '1') {
-    var analyticsSheet = ss.getSheetByName('Analytics') || ss.insertSheet('Analytics');
-    analyticsSheet.appendRow([p.timestamp, p.sessionId, p.name || '', p.event]);
-  } else if (p.name) {
-    var resultsSheet = ss.getSheetByName('Results') || ss.getActiveSheet();
-    resultsSheet.appendRow([p.timestamp, p.name, p.mbtiType, p.enneagramType, p.discType, p.bigFive]);
+  // Serialize concurrent writes — two beacons landing at the same instant
+  // (several friends finishing together) could otherwise drop each other's rows.
+  try {
+    lock.waitLock(5000);
+  } catch (err) {
+    return ContentService.createTextOutput("busy");
+  }
+
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    if (p.analytics === '1') {
+      var analyticsSheet = ss.getSheetByName('Analytics') || ss.insertSheet('Analytics');
+      analyticsSheet.appendRow([p.timestamp, p.sessionId, p.name || '', p.event]);
+    } else if (p.name) {
+      var resultsSheet = ss.getSheetByName('Results') || ss.getActiveSheet();
+      resultsSheet.appendRow([p.timestamp, p.name, p.mbtiType, p.enneagramType, p.discType, p.bigFive]);
+    }
+  } finally {
+    lock.releaseLock();
   }
 
   return ContentService.createTextOutput("ok");
